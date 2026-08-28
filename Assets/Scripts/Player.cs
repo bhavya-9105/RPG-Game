@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class Script : MonoBehaviour
@@ -33,8 +32,9 @@ public class Script : MonoBehaviour
     }
     private void HandleAnimator()
     {
-        bool isMoving = rb.linearVelocity.x != 0;
-        anim.SetBool("IsMoving", isMoving);
+        anim.SetFloat("xVelocity", rb.linearVelocity.x);
+        anim.SetFloat("yVelocity", rb.linearVelocity.y);
+        anim.SetBool("isGrounded", isGrounded);
     }
 
     private void HandleInput()
@@ -42,17 +42,17 @@ public class Script : MonoBehaviour
         XInput = Input.GetAxis("Horizontal");
 
         if (Input.GetKey(KeyCode.Space))
-        Jump();
+            Jump();
     }
 
     private void HandleMovement()
     {
-        rb.linearVelocity = new Vector2(XInput * moveSpeed ,rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(XInput * moveSpeed, rb.linearVelocity.y);
     }
 
     private void Jump()
     {
-        if(isGrounded)
+        if (isGrounded)
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpforce);
     }
 
@@ -64,13 +64,13 @@ public class Script : MonoBehaviour
     {
         if (rb.linearVelocity.x > 0 && facingRight == false)
             Flip();
-        else if(rb.linearVelocity.x < 0 && facingRight == true)
+        else if (rb.linearVelocity.x < 0 && facingRight == true)
             Flip();
     }
     private void Flip()
     {
         transform.Rotate(0, 180, 0);
-        facingRight = !facingRight;        
+        facingRight = !facingRight;
     }
     private void OnDrawGizmos()
     {
