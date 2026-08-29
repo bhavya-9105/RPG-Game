@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Script : MonoBehaviour
+public class Player : MonoBehaviour
 {
     private Animator anim;
     private Rigidbody2D rb;
@@ -10,6 +10,8 @@ public class Script : MonoBehaviour
     [SerializeField] private float jumpforce = 8;
     private bool facingRight = true;
     private float XInput;
+    private bool canMove = true;
+    private bool canJump = true;
 
     [Header("Collision Details")]
     [SerializeField] private float groundCheckDistance;
@@ -30,6 +32,13 @@ public class Script : MonoBehaviour
         HandleAnimator();
         HandleFlip();
     }
+
+    public void EnableMovementAndJump( bool enable)
+    {
+        canMove = enable;
+        canJump = enable;
+    }
+
     private void HandleAnimator()
     {
         anim.SetFloat("xVelocity", rb.linearVelocity.x);
@@ -42,18 +51,28 @@ public class Script : MonoBehaviour
         XInput = Input.GetAxis("Horizontal");
 
         if (Input.GetKey(KeyCode.Space))
-            Jump();
+            TryToJump();
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+            TryToAttack();
     }
 
-    private void HandleMovement()
-    {
-        rb.linearVelocity = new Vector2(XInput * moveSpeed, rb.linearVelocity.y);
-    }
-
-    private void Jump()
+    private void TryToAttack()
     {
         if (isGrounded)
+            anim.SetTrigger("attack");
+    }
+    private void TryToJump()
+    {
+        if (isGrounded && canJump)
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpforce);
+    }
+    private void HandleMovement()
+    {
+        if(canMove)
+            rb.linearVelocity = new Vector2(XInput * moveSpeed, rb.linearVelocity.y);
+        else
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
     private void HandleCollision()
