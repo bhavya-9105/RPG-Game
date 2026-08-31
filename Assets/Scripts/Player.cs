@@ -1,9 +1,18 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     private Animator anim;
     private Rigidbody2D rb;
+
+    
+    [Header("Attack Details")]
+    [SerializeField] private float attackRadius;
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private LayerMask whatIsEnemy; 
+
+
     [Header("Movement details")]
     [SerializeField] private float moveSpeed = 3.5f; // forces unity to edit a privattte varable 
     // on the inspector window
@@ -31,6 +40,18 @@ public class Player : MonoBehaviour
         HandleMovement();
         HandleAnimator();
         HandleFlip();
+    }
+
+    public void DamageEnenmies()
+    {
+        //public Collider2D[] enemyColliders; // set size, when you create and array //cannot add or remove items on the go // faster than list(performance)
+        // public List<Collider2D> exampleList; // can have dynamic size. // can add or remove items on the go // slower than array(performance)
+        Collider2D[] enemyColliders = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, whatIsEnemy);
+
+        foreach (Collider2D enemy in enemyColliders)
+        {
+            enemy.GetComponent<Enemy>().TakeDamage();
+        }
     }
 
     public void EnableMovementAndJump( bool enable)
@@ -62,11 +83,13 @@ public class Player : MonoBehaviour
         if (isGrounded)
             anim.SetTrigger("attack");
     }
+
     private void TryToJump()
     {
         if (isGrounded && canJump)
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpforce);
     }
+
     private void HandleMovement()
     {
         if(canMove)
@@ -79,6 +102,7 @@ public class Player : MonoBehaviour
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
     }
+
     private void HandleFlip()
     {
         if (rb.linearVelocity.x > 0 && facingRight == false)
@@ -86,13 +110,16 @@ public class Player : MonoBehaviour
         else if (rb.linearVelocity.x < 0 && facingRight == true)
             Flip();
     }
+
     private void Flip()
     {
         transform.Rotate(0, 180, 0);
         facingRight = !facingRight;
     }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawLine(transform.position, transform.position + new Vector3(0, -groundCheckDistance));
+        Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
     }
 }
