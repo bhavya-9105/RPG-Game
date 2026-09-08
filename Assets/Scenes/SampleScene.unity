@@ -515,7 +515,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a08dc31525bdf43ac3f8f0373da7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  RedColorDuration: 1
+  timer: 0
+  redColorDuration: 2
 --- !u!212 &711536179
 SpriteRenderer:
   serializedVersion: 3
