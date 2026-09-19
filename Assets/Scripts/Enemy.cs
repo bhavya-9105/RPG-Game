@@ -1,15 +1,16 @@
+using Unity.Collections.Tests.CoreCLR.TestJobs;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] protected float moveSpeed;
     [SerializeField] protected string enemyName;
+    [SerializeField] protected float moveSpeed;
 
 
     public void Update()
     {
-        MoveAround();
+     //   MoveAround();
 
         if (Input.GetKeyDown(KeyCode.F))
             Attack();
@@ -20,7 +21,7 @@ public class Enemy : MonoBehaviour
     }
 
 
-    private void Attack()
+    protected virtual void Attack()
     {
         Debug.Log(enemyName + "Attacks");
 
@@ -29,6 +30,11 @@ public class Enemy : MonoBehaviour
     public void TakeDamage()
     {
 
+    }
+
+    public string GetEnemyName()
+    {
+        return enemyName;
     }
 }
 
