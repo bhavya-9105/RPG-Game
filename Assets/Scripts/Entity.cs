@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Entity : MonoBehaviour
 {
     private Animator anim;
     private Rigidbody2D rb;
