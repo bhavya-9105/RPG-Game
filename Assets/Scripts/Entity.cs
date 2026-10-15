@@ -1,26 +1,28 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    private Animator anim;
-    private Rigidbody2D rb;
+    protected Animator anim;
+    protected Rigidbody2D rb;
 
     
     [Header("Attack Details")]
-    [SerializeField] private float attackRadius;
-    [SerializeField] private Transform attackPoint;
-    [SerializeField] private LayerMask whatIsEnemy; 
+    [SerializeField] protected float attackRadius;
+    [SerializeField] protected Transform attackPoint;
+    [SerializeField] protected LayerMask whatisTarget; 
 
 
     [Header("Movement details")]
-    [SerializeField] private float moveSpeed = 3.5f; // forces unity to edit a privattte varable 
+    [SerializeField] protected float moveSpeed = 3.5f; // forces unity to edit a privattte varable 
     // on the inspector window
     [SerializeField] private float jumpforce = 8;
+    protected int facingDir = 1;
+    protected bool canMove = true;
     private bool facingRight = true;
-    private float XInput;
-    private bool canMove = true;
     private bool canJump = true;
+    private float XInput;
 
     [Header("Collision Details")]
     [SerializeField] private float groundCheckDistance;
@@ -33,7 +35,7 @@ public class Entity : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
     }
 
-    void Update()
+    protected virtual void Update()
     {
         HandleCollision();
         HandleInput();
@@ -42,20 +44,22 @@ public class Entity : MonoBehaviour
         HandleFlip();
     }
 
-    public void DamageEnenmies()
+    public void DamageTargets()
     {
         //public Collider2D[] enemyColliders; // set size, when you create and array //cannot add or remove items on the go // faster than list(performance)
         // public List<Collider2D> exampleList; // can have dynamic size. // can add or remove items on the go // slower than array(performance)
-        Collider2D[] enemyColliders = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, whatIsEnemy);
+        Collider2D[] enemyColliders = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, whatisTarget);
 
         foreach (Collider2D enemy in enemyColliders)
         {
-            Enemy enemyScript = enemy.GetComponent<Enemy>();
-            enemyScript.TakeDamage();
-
-            string enemyName = enemyScript.GetEnemyName();
-            Debug.Log("i damaged the enemy " + enemyName);
+            Entity entityTarget = enemy.GetComponent<Entity>();
+            entityTarget.TakeDamage();
         }
+    }
+
+    private void TakeDamage()
+    {
+        throw new NotImplementedException();
     }
 
     public void EnableMovementAndJump( bool enable)
@@ -64,7 +68,7 @@ public class Entity : MonoBehaviour
         canJump = enable;
     }
 
-    private void HandleAnimator()
+    protected void HandleAnimator()
     {
         anim.SetFloat("xVelocity", rb.linearVelocity.x);
         anim.SetFloat("yVelocity", rb.linearVelocity.y);
@@ -82,7 +86,7 @@ public class Entity : MonoBehaviour
             TryToAttack();
     }
 
-    private void TryToAttack()
+    protected virtual void TryToAttack()
     {
         if (isGrounded)
             anim.SetTrigger("attack");
@@ -94,7 +98,7 @@ public class Entity : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpforce);
     }
 
-    private void HandleMovement()
+    protected virtual void HandleMovement()
     {
         if(canMove)
             rb.linearVelocity = new Vector2(XInput * moveSpeed, rb.linearVelocity.y);
@@ -102,12 +106,14 @@ public class Entity : MonoBehaviour
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
-    private void HandleCollision()
+
+
+    protected virtual void HandleCollision()
     {
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
     }
 
-    private void HandleFlip()
+    protected void HandleFlip()
     {
         if (rb.linearVelocity.x > 0 && facingRight == false)
             Flip();
@@ -119,6 +125,7 @@ public class Entity : MonoBehaviour
     {
         transform.Rotate(0, 180, 0);
         facingRight = !facingRight;
+        facingDir = facingDir * -1;
     }
 
     private void OnDrawGizmos()
