@@ -59,7 +59,7 @@ public class Entity : MonoBehaviour
 
     private void TakeDamage()
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
     }
 
     public void EnableMovementAndJump( bool enable)
@@ -83,10 +83,10 @@ public class Entity : MonoBehaviour
             TryToJump();
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
-            TryToAttack();
+            HandleAttack();
     }
 
-    protected virtual void TryToAttack()
+    protected virtual void HandleAttack()
     {
         if (isGrounded)
             anim.SetTrigger("attack");
