@@ -29,7 +29,7 @@ public class Entity : MonoBehaviour
     [SerializeField] private float jumpforce = 8;
     protected int facingDir = 1;
     protected bool canMove = true;
-    private bool facingRight = true;
+    protected bool facingRight = true;
     private bool canJump = true;
     private float XInput;
 
@@ -161,7 +161,7 @@ public class Entity : MonoBehaviour
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, whatIsGround);
     }
 
-    protected void HandleFlip()
+    protected virtual void HandleFlip()
     {
         if (rb.linearVelocity.x > 0 && facingRight == false)
             Flip();
@@ -169,7 +169,7 @@ public class Entity : MonoBehaviour
             Flip();
     }
 
-    private void Flip()
+    protected virtual void Flip()
     {
         transform.Rotate(0, 180, 0);
         facingRight = !facingRight;
